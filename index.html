@@ -1,22 +1,298 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-Hant">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Redirecting</title>
-    <script>
-        (function() {
-            var userAgent = navigator.userAgent || navigator.vendor || window.opera;
-            if (/android/i.test(userAgent)) {
-                window.location.href = 'https://play.google.com/store/apps/details?id=ttt.jstudio';
-            } else if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
-                window.location.href = 'https://apps.apple.com/app/id1611859224';
-            } else {
-                window.location.href = 'https://www.facebook.com/share/p/LzmFuEeagLFXfog3/';
-            }
-        })();
-    </script>
+    <title>動物幹架 —— 立即下載</title>
+    <link rel="icon" type="image/png" href="./ico.png">
+
+    <!-- ================================================================= -->
+    <!-- 核心：社交平台分享卡片配置 (Open Graph)                           -->
+    <!-- 请在部署到 GitHub Pages 后，将下面的 YOUR_GITHUB_USERNAME            -->
+    <!-- 和 YOUR_REPO_NAME 替换为你真实的 GitHub 用户名和仓库名             -->
+    <!-- ================================================================= -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="動物幹架 —— 立即下載" />
+    <meta property="og:description" content="融合【肉鴿闖關、橫版射擊、多人派對】的魔性手遊！最多支援4人組隊挑戰強大BOSS，還有數十萬張玩家自製地圖無限探索！" />
+    <meta property="og:image" content="https://jstudio.games/cover.jpg" />
+    <meta property="og:url" content="https://jstudio.games/share.html" />
+
+    <!-- 针对 Twitter/X 的卡片优化 -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="動物幹架 —— 立即下載">
+    <meta name="twitter:description" content="融合【肉鴿闖關、橫版射擊、多人派對】的魔性手遊！最多支援4人組隊挑戰強大BOSS，還有數十萬張玩家自製地圖無限探索！">
+    <meta name="twitter:image" content="https://jstudio.games/cover.jpg">
+
+    <style>
+        :root {
+            --primary: #ff5722;
+            --primary-glow: rgba(255, 87, 34, 0.4);
+            --bg-start: #0a0a0c;
+            --bg-end: #141519;
+            --text-main: #ffffff;
+            --text-muted: #8a8d98;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, var(--bg-start), var(--bg-end));
+            color: var(--text-main);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            text-align: center;
+            overflow: hidden;
+        }
+
+        /* 背景微光动画 */
+        .bg-glow {
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(255, 87, 34, 0.08) 0%, rgba(0,0,0,0) 70%);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .container {
+            position: relative;
+            z-index: 10;
+            padding: 40px 24px;
+            max-width: 420px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .logo-container {
+            position: relative;
+            display: inline-block;
+            margin-bottom: 24px;
+        }
+
+        .logo {
+            width: 120px;
+            height: 120px;
+            border-radius: 28px;
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            z-index: 2;
+        }
+
+        .logo-shadow {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            width: 120px;
+            height: 120px;
+            border-radius: 28px;
+            background: var(--primary);
+            filter: blur(20px);
+            opacity: 0.3;
+            z-index: 1;
+        }
+
+        h1 {
+            font-size: 28px;
+            font-weight: 800;
+            margin: 0 0 8px 0;
+            letter-spacing: 1px;
+            background: linear-gradient(to right, #ffffff, #e0e0e0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .status-text {
+            font-size: 16px;
+            color: var(--text-muted);
+            margin: 0 0 32px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            min-height: 24px;
+        }
+
+        /* 旋转的 Loading 效果 */
+        .spinner {
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-top: 2px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 16px 32px;
+            color: white;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 16px;
+            letter-spacing: 0.5px;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-sizing: border-box;
+        }
+
+        /* 默认橙色高亮按钮 */
+        .btn-primary {
+            background: linear-gradient(135deg, #ff5722, #ff8a50);
+            box-shadow: 0 6px 20px var(--primary-glow);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(255, 87, 34, 0.6);
+        }
+
+        /* 暗色辅助按钮 */
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.05);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-secondary:hover {
+            transform: translateY(-2px);
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .btn:active {
+            transform: translateY(1px);
+        }
+
+        /* PC端双按钮容器 */
+        .pc-buttons {
+            display: none;
+            gap: 16px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .pc-buttons .btn {
+            flex: 1;
+            padding: 14px 20px;
+            font-size: 15px;
+        }
+
+        .tip-text {
+            font-size: 12px;
+            color: #5a5d68;
+            margin-top: 24px;
+        }
+    </style>
 </head>
 <body>
+
+<div class="bg-glow"></div>
+
+<div class="container">
+    <div class="logo-container">
+        <img class="logo" src="./ico.png" onerror="this.src='https://img.icons8.com/color/512/game-controller.png'" alt="Game Logo">
+        <div class="logo-shadow"></div>
+    </div>
+
+    <h1 id="title-text">動物幹架</h1>
+    
+    <div class="status-text">
+        <div class="spinner" id="status-spinner"></div>
+        <span id="status-msg">正在偵測您的裝置並跳轉商店...</span>
+    </div>
+
+    <!-- 移动端单按钮（自动跳转） -->
+    <a id="download-btn-mobile" class="btn btn-primary" href="#" style="display: none;">手動跳轉下載</a>
+
+    <!-- PC端双按钮（停留页面，不自动跳转） -->
+    <div id="download-btns-pc" class="pc-buttons">
+        <a class="btn btn-primary" id="apple-store-btn" href="#" target="_blank">App Store 下載</a>
+        <a class="btn btn-primary" id="google-play-btn" href="#" target="_blank">Google Play 下載</a>
+    </div>
+    <p class="tip-text">如果您未安裝對應商店，請點擊按鈕手動下載</p>
+</div>
+
+<script>
+    // 商店链接配置
+    const URL_APP_STORE = "https://apps.apple.com/app/id1611859224";
+    const URL_GOOGLE_PLAY = "https://play.google.com/store/apps/details?id=ttt.jstudio";
+
+    function detectPlatform() {
+        const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+
+        // 识别 iOS 设备
+        if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
+            return {
+                isMobile: true,
+                url: URL_APP_STORE,
+                name: "App Store"
+            };
+        }
+        
+        // 识别 Android 设备
+        if (/android/i.test(userAgent)) {
+            return {
+                isMobile: true,
+                url: URL_GOOGLE_PLAY,
+                name: "Google Play"
+            };
+        }
+
+        // 非移动端（PC / Mac 等桌面设备）
+        return {
+            isMobile: false
+        };
+    }
+
+    const platform = detectPlatform();
+    const btnMobile = document.getElementById("download-btn-mobile");
+    const btnsPc = document.getElementById("download-btns-pc");
+    const statusMsg = document.getElementById("status-msg");
+    const statusSpinner = document.getElementById("status-spinner");
+
+    // 初始化 PC 按钮的链接
+    document.getElementById("apple-store-btn").href = URL_APP_STORE;
+    document.getElementById("google-play-btn").href = URL_GOOGLE_PLAY;
+
+    if (platform.isMobile) {
+        // 1. 移动端：显示单按钮，配置跳转链接，并启动自动跳转
+        btnMobile.style.display = "flex";
+        btnMobile.href = platform.url;
+        btnMobile.innerText = "前往 " + platform.name + " 下載";
+
+        // 延迟 1 秒自动跳转
+        setTimeout(function() {
+            statusMsg.innerText = "正在前往 " + platform.name + "...";
+            window.location.href = platform.url;
+            
+            setTimeout(function() {
+                statusSpinner.style.display = "none";
+                statusMsg.innerText = "已完成跳轉，如未成功請點擊按鈕";
+            }, 1500);
+        }, 1000);
+    } else {
+        // 2. PC 端：不跳转，隐藏 Loading 动画，显示双按钮供玩家选择
+        statusSpinner.style.display = "none";
+        statusMsg.innerText = "請選擇您的裝置平台進行下載";
+        
+        btnMobile.style.display = "none";
+        btnsPc.style.display = "flex";
+    }
+</script>
+
 </body>
 </html>
